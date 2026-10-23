@@ -136,7 +136,9 @@ export const InteractionStates = {
         <p style={{ fontSize: 13, color: '#616161', marginBottom: 16, fontFamily: 'Inter, sans-serif' }}>
           Click a card to filter — only one can be active at a time.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 12 }}>
+        {/* Canonical metric row — .nx-metric-grid: 4 across → 2 × 2 → 1,
+            never 3 + 1 (global.css). Use this wrapper for every MetricCard row. */}
+        <div className="nx-metric-grid"><div className="nx-metric-grid__cards">
           {CARDS.map(card => (
             <MetricCard
               key={card.id}
@@ -148,7 +150,7 @@ export const InteractionStates = {
               onClick={() => setSelected(prev => prev === card.id ? null : card.id)}
             />
           ))}
-        </div>
+        </div></div>
 
         {selected && (
           <div style={{ marginTop: 20, padding: '12px 16px', borderRadius: 8, background: '#f0f7ff', fontSize: 13, color: '#00527c', fontFamily: 'Inter, sans-serif' }}>
@@ -183,11 +185,11 @@ export const Loading = {
   name: 'Loading skeleton',
   parameters: { layout: 'padded' },
   render: () => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 12, maxWidth: 900 }}>
+    <div className="nx-metric-grid" style={{ maxWidth: 900 }}><div className="nx-metric-grid__cards">
       <MetricCard loading />
       <MetricCard loading />
       <MetricCard loading />
       <MetricCard loading />
-    </div>
+    </div></div>
   ),
 };

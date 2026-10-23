@@ -275,11 +275,11 @@ export function LabRegisterScreen({
       />
 
       {/* KPI row — every card states its denominator (the persona's scope). */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
-        gap: 12, marginBottom: 24,
-      }}>
+      {/* .nx-metric-grid: five cards → 5 across when they fit; otherwise
+          Total takes the full row and the four status cards go 4 / 2 × 2 / 1
+          — never an orphan (global.css). */}
+      <div className="nx-metric-grid" style={{ marginBottom: 24 }}>
+      <div className="nx-metric-grid__cards">
         <MetricCard
           title="Total equipment" metric={showData ? String(kpiRows.length) : '—'} loading={loading}
           badge={showData ? deltaPill(kpiRows.length - kpiRows.length, true) : undefined}
@@ -309,6 +309,7 @@ export function LabRegisterScreen({
             />
           );
         })}
+      </div>
       </div>
 
       {state === 'error' && (

@@ -125,10 +125,14 @@ export default function TemperatureReadings() {
       {/* Sections stack directly — Page's built-in bottom padding spaces it from
           the metrics; the metrics row carries marginBottom 24 so every vertical
           gap (toolbar→header, header→metrics, metrics→table) reads as 24px. */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+      {/* .nx-metric-grid: 3 across → 1, never 2 + 1 (global.css). Was a fixed
+          repeat(3, 1fr), which squeezed all three side by side on phones. */}
+      <div className="nx-metric-grid" style={{ marginBottom: 24 }}>
+      <div className="nx-metric-grid__cards" style={{ gap: 16 }}>
         <MetricCard title="Facilities reporting" metric="42" badge={{ tone: 'info', label: '42 of 46 total' }} />
         <MetricCard title="Complete today" metric="38" badge={{ tone: 'success', label: '92% of target' }} />
         <MetricCard title="Needs attention" metric="4" badge={{ tone: 'warning', label: '4 incomplete' }} />
+      </div>
       </div>
 
       {/* Matches the Figma Banner instance: Tone=warning, In card=true, Title=false

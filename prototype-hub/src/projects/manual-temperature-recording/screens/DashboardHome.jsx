@@ -105,6 +105,9 @@ export default function DashboardHome({
           own frames are the CONTENT reference. */}
       <div className="nx-home-grid" style={{ marginBottom: 16 }}>
         <div className="nx-home-grid__tiles">
+          {/* Each widget wears .nx-home-actions__item: 3-across at the 3-column
+              breakpoint, full-width stack below it — never a 2 + 1 split. */}
+          <div className="nx-home-actions__item">
           <CardLayoutType6 icon={ico('BarcodeIcon')} title="Quick Action" loading={loading}>
             <Cell
               icon={ico('BarcodeIcon', '#303030')}
@@ -115,9 +118,11 @@ export default function DashboardHome({
               ariaLabel="Scan a QR code or enter a serial number"
             />
           </CardLayoutType6>
+          </div>
 
           {/* Action Required — D1 live row · D1b "No urgent issues" + all-within-
               range row · D1c "—" badge + muted unavailable text (9196:38686). */}
+          <div className="nx-home-actions__item">
           <CardLayoutType6
             icon={ico('AlertTriangleIcon', '#8e1f0b')}
             title="Action Required"
@@ -153,12 +158,14 @@ export default function DashboardHome({
               />
             )}
           </CardLayoutType6>
+          </div>
 
           {/* Today's Temperature Tasks — the count badge, the tabs and the
               drawer all derive from `tasks`, so the card and its slide-over can
               never disagree (the 10-vs-13 defect found in the Figma frames).
               D1b: "All complete" badge + "Nothing left to record today" Cell.
               D1c: "—" badge + "Unavailable — couldn't load". */}
+          <div className="nx-home-actions__item">
           <TemperatureTasksCard
             tasks={tasks}
             title="Today's Temperature Tasks"
@@ -170,6 +177,7 @@ export default function DashboardHome({
               : undefined}
             errorMessage={tasksMode === 'error' ? "Unavailable — couldn't load" : undefined}
           />
+          </div>
         </div>
       </div>
 

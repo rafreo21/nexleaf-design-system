@@ -102,3 +102,59 @@ html, body {
   .nx-home-actions__quick { grid-column: span 1; }
   .nx-home-actions__wide  { grid-column: span 2; }
 }
+
+/* Home action row (Layout 2): three equal widgets — Quick Action · Today's
+   Temp. Tasks · Action Required. They sit 3-across ONLY at the 3-column
+   breakpoint; below it every widget stacks full-width — never a 2 + 1 split
+   with two widgets sharing a row — the same way Layout 1's Action Required
+   drops under Quick Action. `display: grid` lets the card fill the wrapper so
+   the three stay equal-height when they share the row; its single track is
+   minmax(0, 1fr) — NOT the implicit `auto` — for the same reason as the tile
+   grid above: an `auto` track grows to the card's nowrap min-content, so the
+   card would spill past its column (and the page would h-scroll). */
+.nx-home-actions__item {
+  grid-column: 1 / -1; min-width: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr);
+}
+@container (min-width: 720px) {
+  .nx-home-actions__item { grid-column: span 1; }
+}
+
+/* ─────────────────────────────────────────────
+ * METRIC CARD ROW
+ * A row of MetricCards. CONTAINER-driven (like .nx-home-grid, so it's right
+ * with the rail docked or not) and COUNT-aware, so a row never breaks into an
+ * orphan — the old inline `repeat(auto-fit, minmax(220px, 1fr))` stepped
+ * 4 → 3 + 1 → 2 → 1, leaving one card alone on its row.
+ *   4 cards: 4 across → 2 × 2 (iPad) → 1      — never 3 + 1
+ *   3 cards: 3 across → 1                     — never 2 + 1
+ *   2 cards: 2 across → 1
+ *   5 cards (headline + four): 5 across → headline full-row + 4 / 2 × 2 → 1
+ *   <div class="nx-metric-grid"><div class="nx-metric-grid__cards"> …MetricCards… </div></div>
+ * minmax(0, 1fr) tracks for the same no-spill reason as the tile grid.
+ * ───────────────────────────────────────────── */
+.nx-metric-grid { container-type: inline-size; }
+.nx-metric-grid__cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);                                         /* phones: stacked */
+}
+@container (min-width: 460px) {
+  .nx-metric-grid__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* 2 × 2 */
+}
+@container (min-width: 900px) {
+  .nx-metric-grid__cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }   /* 4 across */
+  .nx-metric-grid__cards:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Exactly three: one row of three or a full stack — a 2-column step orphans one. */
+.nx-metric-grid__cards:has(> :nth-child(3):last-child) { grid-template-columns: minmax(0, 1fr); }
+@container (min-width: 720px) {
+  .nx-metric-grid__cards:has(> :nth-child(3):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* Exactly five (headline + four): five across when it fits; otherwise the
+   headline card takes the full row and the other four keep the 4 / 2 × 2 rhythm. */
+.nx-metric-grid__cards:has(> :nth-child(5):last-child) > :first-child { grid-column: 1 / -1; }
+@container (min-width: 1100px) {
+  .nx-metric-grid__cards:has(> :nth-child(5):last-child) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .nx-metric-grid__cards:has(> :nth-child(5):last-child) > :first-child { grid-column: auto; }
+}

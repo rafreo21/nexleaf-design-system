@@ -914,12 +914,9 @@ function SectionedView({ onGoHome, initialActiveId = 'coldchain' }) {
                 View: each card carries an `infoTooltip` for the (i) icon,
                 a `selected` state driven by `activeMetric`, and an `onClick`
                 that toggles selection. Clicking the active tile clears it. */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
-              gap: 12,
-              marginBottom: 24,
-            }}>
+            {/* .nx-metric-grid: 4 across → 2 × 2 → 1, never 3 + 1 (global.css). */}
+            <div className="nx-metric-grid" style={{ marginBottom: 24 }}>
+            <div className="nx-metric-grid__cards">
               {[
                 { key: 'total',    title: 'Total Installations', metric: '247', badge: { label: '3 Critical',      tone: 'critical'  }, tooltip: 'Total devices with an active installation record.' },
                 { key: 'offline',  title: 'Devices Offline',     metric: '12',  badge: { label: '12 Offline',      tone: 'attention' }, tooltip: 'Devices that have not reported in over 24 hours.' },
@@ -936,6 +933,7 @@ function SectionedView({ onGoHome, initialActiveId = 'coldchain' }) {
                   onClick={() => setActiveMetric((prev) => (prev === card.key ? null : card.key))}
                 />
               ))}
+            </div>
             </div>
 
             {/* Section 3 — IndexTable */}

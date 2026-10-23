@@ -197,13 +197,14 @@ function AlertDetailPage({
         <Section title="Current Condition"
           titleRight={<span style={{ fontSize: 12, color: TEXT_SUBDUED }}>Source: <span style={{ fontWeight: 600, color: TEXT_INFO }}>{manualOnly ? 'Manual temperature recording' : 'Nexleaf RTMD'}</span></span>}>
           {banners.map((b, i) => <Banner key={i} tone={b.tone} title={b.title} inCard>{b.body}</Banner>)}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 12 }}>
+          {/* .nx-metric-grid: 3 across → 1, never 2 + 1 (global.css). */}
+          <div className="nx-metric-grid"><div className="nx-metric-grid__cards">
             <MetricCard title={state === 'unknown' ? 'Last Known Temperature' : 'Current Temperature'} metric={current.temp}
               badge={{ label: current.out ? 'Out of range' : 'In range', tone: current.out ? 'critical' : 'success' }} />
             <MetricCard title="Acceptable Range" metric={current.range} />
             <MetricCard title="Deviation" metric={current.deviation}
               badge={{ label: current.deviationSub, tone: current.out ? 'critical' : 'success' }} />
-          </div>
+          </div></div>
           <div style={{ fontSize: 12, color: TEXT_SUBDUED }}>{current.lastReading}</div>
         </Section>
 
@@ -416,9 +417,9 @@ export const LoadingState = () => (
           </div>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 12 }}>
+      <div className="nx-metric-grid"><div className="nx-metric-grid__cards">
         <MetricCard loading /><MetricCard loading /><MetricCard loading />
-      </div>
+      </div></div>
       <div style={{ ...SECTION, height: 240, alignItems: 'stretch' }}>
         <Skeleton width={160} height={14} />
         <Skeleton width="100%" height={170} />

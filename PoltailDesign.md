@@ -361,9 +361,26 @@ The NavCard dashboard tiles use a **container query** utility (`.nx-home-grid` /
 
 - container ≥ **720px → 3 columns** · ≥ **460px → 2** · else **1**
 
-The Home **action row** rides the same grid so its edges sit on the module columns: Layout 1 puts Quick Action on column 1 and Action Required spanning columns 2–3 (`.nx-home-actions__quick` / `.nx-home-actions__wide`); **Home Layout 2** adds `TemperatureTasksCard` as the middle column (one card per column). Below the 3-column breakpoint they stack full-width.
+The Home **action row** rides the same grid so its edges sit on the module columns: Layout 1 puts Quick Action on column 1 and Action Required spanning columns 2–3 (`.nx-home-actions__quick` / `.nx-home-actions__wide`); **Home Layout 2** adds `TemperatureTasksCard` as the middle column (one card per column) — each of its three widgets is wrapped in `.nx-home-actions__item`. Below the 3-column breakpoint they stack full-width: the row goes 3-across → fully stacked, **never a 2 + 1 split** (Quick Action + Today's Temp. Tasks sharing a row with Action Required orphaned below). Without `.nx-home-actions__item` the widgets fall through to the tile grid's 3 → 2 → 1 and produce exactly that split. The wrapper's single track is `minmax(0, 1fr)` so a card's nowrap row can never push it past its column.
 
-> **Responsive grids rule:** content grids reflow in pure CSS (`repeat(auto-fit, minmax(min(100%, N), 1fr))` or `flex-wrap`, or container queries when a hard column cap is needed) — **not** JS-width-driven `gridTemplateColumns`, which lags a frame on resize and can overflow.
+### Metric card row
+
+Every row of `MetricCard`s uses the **`.nx-metric-grid` / `.nx-metric-grid__cards`** utility in `global.css` — container-driven like the home grid, and **count-aware**, so a row never breaks into an orphan:
+
+- **4 cards:** 4 across (container ≥ 900px) → **2 × 2** (≥ 460px, iPad) → 1 — **never 3 + 1**
+- **3 cards:** 3 across (≥ 720px) → 1 — **never 2 + 1**
+- **2 cards:** 2 across → 1
+- **5 cards** (headline + four, e.g. Lab Register): 5 across (≥ 1100px) → headline full-row + 4 / 2 × 2 → 1
+
+```jsx
+<div className="nx-metric-grid" style={{ marginBottom: 24 }}>
+  <div className="nx-metric-grid__cards">{/* MetricCards */}</div>
+</div>
+```
+
+> **Responsive grids rule:** content grids reflow in pure CSS — **not** JS-width-driven `gridTemplateColumns`, which lags a frame on resize and can overflow.
+>
+> **Correction (2026-10-14):** this rule previously recommended `repeat(auto-fit, minmax(min(100%, N), 1fr))` for content grids in general. That is right for **open-ended** collections (any number of items — fields in a detail card, cells, galleries), but **wrong for fixed-count card rows**: auto-fit fits as many columns as it can, so 4 metric cards stepped 4 → **3 + 1** → 2 → 1 and the 3-widget home row went 3 → **2 + 1** → 1, each leaving one card orphaned. Fixed-count rows use the count-aware container grids above (`.nx-metric-grid`, `.nx-home-actions__item`); auto-fit / `flex-wrap` remain the default for open-ended content.
 
 ---
 

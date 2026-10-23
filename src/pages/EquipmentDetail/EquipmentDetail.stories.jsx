@@ -322,7 +322,9 @@ export const MainView = {
             primaryAction={{ content: 'Add Installation', onAction: () => {} }}
           />
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 16, marginBottom: 16 }}>
+          {/* .nx-metric-grid: 4 across → 2 × 2 → 1, never 3 + 1 (global.css). */}
+          <div className="nx-metric-grid" style={{ marginBottom: 16 }}>
+          <div className="nx-metric-grid__cards" style={{ gap: 16 }}>
             {[
               { key: 'total',    title: 'Total Installations', metric: '12', badge: { label: '4 High Priority',   tone: 'warning' }, tooltip: 'Total number of active solar installations'   },
               { key: 'offgrid',  title: 'Off-Grid',            metric: '8',  badge: { label: '+2 from last week', tone: 'success' }, tooltip: 'Installations running fully off-grid'         },
@@ -339,6 +341,7 @@ export const MainView = {
                 onClick={() => setActiveMetric(prev => prev === card.key ? null : card.key)}
               />
             ))}
+          </div>
           </div>
 
           <IndexTable

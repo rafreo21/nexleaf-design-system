@@ -173,9 +173,11 @@ function Home({ onOpenModule, onOpenScan, variant = 'default' }) {
         <div className="nx-home-grid__tiles">
           {showTasks ? (
             <>
-              {quickActionCard}
-              <TemperatureTasksCard onRecord={() => onOpenModule('coldchain')} />
-              {actionRequiredCard}
+              {/* .nx-home-actions__item: 3-across at the 3-column breakpoint,
+                  full-width stack below it — never a 2 + 1 split. */}
+              <div className="nx-home-actions__item">{quickActionCard}</div>
+              <div className="nx-home-actions__item"><TemperatureTasksCard onRecord={() => onOpenModule('coldchain')} /></div>
+              <div className="nx-home-actions__item">{actionRequiredCard}</div>
             </>
           ) : (
             <>
@@ -305,12 +307,9 @@ function List({ title, titleDisclosure, onOpenRecord }) {
 
       {/* Metric tiles — interactive, same rhythm as the Sectioned Layout:
           Page's 24px bottom padding above, explicit 24px below to the table. */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
-        gap: 12,
-        marginBottom: 24,
-      }}>
+      {/* .nx-metric-grid: 4 across → 2 × 2 → 1, never 3 + 1 (global.css). */}
+      <div className="nx-metric-grid" style={{ marginBottom: 24 }}>
+      <div className="nx-metric-grid__cards">
         {EQUIP_METRICS.map((card) => (
           <MetricCard
             key={card.key}
@@ -322,6 +321,7 @@ function List({ title, titleDisclosure, onOpenRecord }) {
             onClick={() => setActiveMetric((prev) => (prev === card.key ? null : card.key))}
           />
         ))}
+      </div>
       </div>
 
       <IndexTable

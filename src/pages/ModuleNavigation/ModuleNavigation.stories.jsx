@@ -215,26 +215,34 @@ function ModuleNavigationApp() {
               deep-linking into its module. */}
           <div className="nx-home-grid" style={{ marginBottom: 16 }}>
             <div className="nx-home-grid__tiles">
-              <CardLayoutType6 icon={<IcoScanRows />} title="Quick Action">
-                <Cell
-                  icon={<IcoQr />}
-                  iconTone="neutral"
-                  title="Scan QR Code or Enter Serial No."
-                  onClick={() => setScanOpen(true)}
-                  ariaLabel="Scan QR Code or Enter Serial No."
-                />
-              </CardLayoutType6>
-              <TemperatureTasksCard onRecord={() => openSection('temperature', 'record-temperature')} />
-              <CardLayoutType6
-                tone="critical"
-                icon={<IcoAlertCircle />}
-                title="Action Required"
-                badge="5 Urgent Issues"
-                actionLabel="View All"
-                onAction={() => openSection('inventory', 'health-status')}
-              >
-                <Cell icon={<IcoGauge />} iconTone="neutral" title="Temperature exceeds threshold" description="Incubator HC 1501-2023-001 | Main Laboratory" hasChevron onClick={() => openSection('inventory', 'health-status')} ariaLabel="Temperature exceeds threshold" />
-              </CardLayoutType6>
+              {/* .nx-home-actions__item: 3-across at the 3-column breakpoint,
+                  full-width stack below it — never a 2 + 1 split. */}
+              <div className="nx-home-actions__item">
+                <CardLayoutType6 icon={<IcoScanRows />} title="Quick Action">
+                  <Cell
+                    icon={<IcoQr />}
+                    iconTone="neutral"
+                    title="Scan QR Code or Enter Serial No."
+                    onClick={() => setScanOpen(true)}
+                    ariaLabel="Scan QR Code or Enter Serial No."
+                  />
+                </CardLayoutType6>
+              </div>
+              <div className="nx-home-actions__item">
+                <TemperatureTasksCard onRecord={() => openSection('temperature', 'record-temperature')} />
+              </div>
+              <div className="nx-home-actions__item">
+                <CardLayoutType6
+                  tone="critical"
+                  icon={<IcoAlertCircle />}
+                  title="Action Required"
+                  badge="5 Urgent Issues"
+                  actionLabel="View All"
+                  onAction={() => openSection('inventory', 'health-status')}
+                >
+                  <Cell icon={<IcoGauge />} iconTone="neutral" title="Temperature exceeds threshold" description="Incubator HC 1501-2023-001 | Main Laboratory" hasChevron onClick={() => openSection('inventory', 'health-status')} ariaLabel="Temperature exceeds threshold" />
+                </CardLayoutType6>
+              </div>
             </div>
           </div>
 

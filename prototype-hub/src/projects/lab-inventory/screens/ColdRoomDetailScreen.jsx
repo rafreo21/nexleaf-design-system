@@ -139,7 +139,8 @@ export function ColdRoomDetailScreen({ recordId = 'ccs-wicr-001', state = 'defau
           )}
 
           {/* Current condition — per selected sensor, denominator on the face. */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 12 }}>
+          {/* .nx-metric-grid: 4 across → 2 × 2 → 1, never 3 + 1 (global.css). */}
+          <div className="nx-metric-grid"><div className="nx-metric-grid__cards">
             <MetricCard
               loading={loading}
               title={sensorId === 'all' ? 'Current (sensor average)' : `Current — ${sensors.find((s) => s.id === sensorId)?.label}`}
@@ -156,7 +157,7 @@ export function ColdRoomDetailScreen({ recordId = 'ccs-wicr-001', state = 'defau
               infoTooltip="Share of expected uploads received across all sensors on this record, last 7 days." />
             <MetricCard loading={loading} title="Time in range (7 days)" metric={state === 'no-readings' ? '—' : STATS.inRange}
               infoTooltip="Share of in-room readings inside 2–8 °C, last 7 days. Ambient readings are excluded." />
-          </div>
+          </div></div>
 
           {/* Temperature history — the Equipment Plot surface for this record. */}
           <Card>
