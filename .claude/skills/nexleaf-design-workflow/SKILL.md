@@ -1,6 +1,6 @@
 ---
 name: "nexleaf-design-workflow"
-description: "The end-to-end design workflow for Raphael at Nexleaf — collect (meeting/Slack/PRD/correction) → track in Jira → create in Figma and the prototype hub → verify → deliver on design.nexleaf.org. Use this as the entry point whenever he says \"run the workflow\", starts a new design project, hands over a PRD or meeting notes, asks what the process is, or when work spans more than one stage. Also load it before any multi-frame or multi-screen build, because it carries the pre-flight and the definition of done. Delegates to ds-components-only, prototype-review-then-publish, figma-design-audit, design-critique, nexleaf-design-system, and the PRD skills."
+description: "The end-to-end design workflow for Raphael at Nexleaf — collect (meeting/Slack/PRD/correction) → track in Jira → create in Figma and the prototype hub → verify → deliver on design.nexleaf.org. Use this as the entry point whenever he says \"run the workflow\", starts a new design project, hands over a PRD or meeting notes, asks what the process is, or when work spans more than one stage. Also load it before any multi-frame or multi-screen build, because it carries the pre-flight and the definition of done. Delegates to ds-components-only, prototype-review-then-publish, figma-design-audit, design-critique, nexleaf-design-system, coldtrace-design-backup, and the PRD skills."
 ---
 
 # Nexleaf design workflow — the whole loop
@@ -162,6 +162,10 @@ Load **`prototype-review-then-publish`**.
   hasn't run is *unverified* — say so rather than implying it works.
 - **Record:** Slack DM + Jira comment + prototype `CHANGELOG.md` + commit
   `proto(<slug>): <what> — <why> [PD-XX]` (or `ds(<Component>): …`).
+- **Offer the design backup.** After a prototype or design changes, offer
+  **`coldtrace-design-backup`** in one line: a versioned notes card in Figma with the idea, evidence,
+  rules and open questions. It is an offer, not a step to run unasked — the mirror handshake still
+  applies, so nothing goes into Figma without his yes. It loads `coldtrace-case-study-library`.
 
 ## Standing rules learned from his corrections
 
