@@ -94,8 +94,8 @@ export const AllShadows = {
         Inset shadows create button borders without causing layout shift on state changes.
         The outset focus ring layers on top, so both coexist without conflicts.
       </p>
-      <div style={{ background: '#fff3cd', border: '1px solid #ffd966', borderRadius: 8, padding: '10px 14px',
-        fontSize: 13, color: '#856404', marginBottom: 40, lineHeight: 1.5 }}>
+      <div style={{ background: '#fff1e3', border: '1px solid #ffc879', borderRadius: 8, padding: '10px 14px',
+        fontSize: 13, color: '#5e4200', marginBottom: 40, lineHeight: 1.5 }}>
         <strong>Why box-shadow borders?</strong> A standard CSS <code>border</code> occupies layout space —
         toggling it on state change shifts surrounding content. Inset box-shadow is painted inside the element
         bounds and causes zero layout shift, making state transitions smooth.

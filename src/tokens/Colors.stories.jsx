@@ -76,9 +76,9 @@ const COLORS = {
     { token: '--nx-border-success',value: '#7be8b4', usage: 'Success banner border' },
   ],
   'Warning': [
-    { token: '--nx-bg-warning',    value: '#fff3cd', usage: 'Warning banner / badge background' },
-    { token: '--nx-text-warning',  value: '#856404', usage: 'Warning banner / badge text' },
-    { token: '--nx-border-warning',value: '#ffd966', usage: 'Warning banner border' },
+    { token: '--nx-bg-warning',    value: '#fff1e3', usage: 'Warning banner / badge background' },
+    { token: '--nx-text-warning',  value: '#5e4200', usage: 'Warning banner / badge text' },
+    { token: '--nx-border-warning',value: '#ffc879', usage: 'Warning banner border' },
   ],
   'Info': [
     { token: '--nx-bg-info',    value: '#eaf4ff', usage: 'Info banner background' },

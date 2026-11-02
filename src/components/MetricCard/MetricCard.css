@@ -147,7 +147,7 @@
 }
 
 .nx-metric-card__badge[data-tone='warning'] {
-  background: #ffd6a4;                    /* Badge warning bg — no token (—nx-bg-warning is #fff3cd) */
+  background: #ffd6a4;                    /* Badge warning bg, the deeper chip tier: no token (--nx-bg-warning is #fff1e3) */
   color: #5e4200;                         /* Badge warning text — no token */
 }
 

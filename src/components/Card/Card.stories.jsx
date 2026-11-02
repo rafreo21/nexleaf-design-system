@@ -32,7 +32,7 @@ const GaugeIcon = ({ size = 20, color = '#d92d20' }) => (
   </svg>
 );
 
-const WrenchIcon = ({ size = 20, color = '#856404' }) => (
+const WrenchIcon = ({ size = 20, color = '#5e4200' }) => (
   <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true" style={{ display: 'block' }}>
     <path d="M12.7 5.3a3 3 0 0 0-3.9 3.9l-5 5a1.5 1.5 0 0 0 2.1 2.1l5-5a3 3 0 0 0 3.9-3.9l-1.8 1.8-1.6-.4-.4-1.6 1.7-1.7Z"
       stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -41,8 +41,8 @@
 .nx-banner--warning {
   --nx-banner-header-bg: #ffb800;
   --nx-banner-header-text: #332e00;
-  --nx-banner-card-bg: #fff1e3;                  /* banner warning tint (≠ --nx-bg-warning) */
-  --nx-banner-card-text: #5e4200;                /* banner warning text */
+  --nx-banner-card-bg: var(--nx-bg-warning);     /* #fff1e3 */
+  --nx-banner-card-text: var(--nx-text-warning); /* #5e4200 */
 }
 .nx-banner--critical {
   --nx-banner-header-bg: #e51c00;                /* --nx-color-critical-strong */

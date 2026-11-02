@@ -70,7 +70,7 @@
 
 /* Icon-tile tones — soft tint signalling row context. */
 .nx-cell__icon--critical { background: var(--nx-bg-critical-soft); } /* #fde2e1 */
-.nx-cell__icon--warning  { background: var(--nx-bg-warning); }       /* #fff3cd */
+.nx-cell__icon--warning  { background: var(--nx-bg-warning); }       /* #fff1e3 */
 .nx-cell__icon--info     { background: var(--nx-bg-info); }          /* #eaf4ff */
 .nx-cell__icon--neutral  { background: var(--nx-bg-hover); }         /* rgba(0,0,0,0.06) */
 

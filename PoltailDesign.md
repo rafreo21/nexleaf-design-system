@@ -120,9 +120,9 @@ Translucent black overlays for hover/pressed states on neutral surfaces, plus th
 | `bg-success` | `#cdfee1` | Success banner/badge background |
 | `text-success` | `#0c5132` | Success banner/badge text |
 | `border-success` | `#7be8b4` | Success banner border |
-| `bg-warning` | `#fff3cd` | Warning banner/badge background |
-| `text-warning` | `#856404` | Warning banner/badge text |
-| `border-warning` | `#ffd966` | Warning banner border |
+| `bg-warning` | `#fff1e3` | Warning surface: in-card banner, Cell tile (Figma `surface-warning`) |
+| `text-warning` | `#5e4200` | Warning text on that surface (Figma `text-warning`) |
+| `border-warning` | `#ffc879` | Warning border (Figma `border-warning`) |
 | `bg-info` | `#eaf4ff` | Info banner background |
 | `text-info` | `#00527c` | Info banner text |
 | `border-info` | `#b3d9f7` | Info banner border |
@@ -581,7 +581,7 @@ Props: `tone` (default/info/success/attention/warning/critical), `size` (medium/
 
 ### `StatusBadge` — Preset Status Pill
 ```jsx
-<StatusBadge status="pending" />    // #fff3cd bg, #856404 text
+<StatusBadge status="pending" />    // attention tone: #ffef9d bg, #4f4700 text
 <StatusBadge status="completed" />  // #cdfee1 bg, #0c5132 text
 <StatusBadge status="locked" />     // #f0f0f0 bg, #b5b5b5 text
 ```

@@ -374,6 +374,10 @@ skill stores. Corrections from a session that cannot commit are still worth acti
 > difference: code `#fff3cd` is yellow while Figma's warning surface is orange. PD-42 and PD-43 were
 > raised on the wrong premise and need revisiting.
 >
+> **Warning settled (2026-11-02, Raphael):** code moves to Figma's orange family: `bg-warning`
+> `#fff1e3`, `text-warning` `#5e4200`, `border-warning` `#ffc879`. The warning row above is now an
+> exact match. Yellow stays with `attention` and `caution`.
+>
 > Assertion: resolve every alias and read `a` as well as `r,g,b` before calling a variable wrong.
 
 `src/tokens/index.js` already defines **two deliberate tiers**, and documents why:

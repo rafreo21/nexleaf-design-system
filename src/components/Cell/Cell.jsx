@@ -16,7 +16,7 @@ import {
 const ICON_TONES = {
   success:  BG_SUCCESS,       // #cdfee1 (default)
   critical: BG_CRITICAL_SOFT, // #fde2e1
-  warning:  BG_WARNING,       // #fff3cd
+  warning:  BG_WARNING,       // #fff1e3
   info:     BG_INFO,          // #eaf4ff
   neutral:  BG_HOVER,         // rgba(0,0,0,0.06)
 };

@@ -55,9 +55,9 @@ export const TEXT_SUCCESS   = '#0c5132';
 export const BORDER_SUCCESS = '#7be8b4';
 
 // Semantic — warning family
-export const BG_WARNING     = '#fff3cd';
-export const TEXT_WARNING   = '#856404';
-export const BORDER_WARNING = '#ffd966';
+export const BG_WARNING     = '#fff1e3';
+export const TEXT_WARNING   = '#5e4200';
+export const BORDER_WARNING = '#ffc879';
 
 // Semantic — info family
 export const BG_INFO     = '#eaf4ff';

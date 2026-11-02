@@ -168,11 +168,11 @@ function AlertDetailPage({
         {/* 1 — Alert header */}
         <Section>
           <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: state === 'normal' ? '#cdfee1' : state === 'unknown' ? '#fff3cd' : '#fde2e1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: state === 'normal' ? '#cdfee1' : state === 'unknown' ? '#fff1e3' : '#fde2e1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-                <path d="M3 13a7 7 0 1 1 14 0" stroke={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#856404' : COLOR_CRITICAL} strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M10 13l3.2-4" stroke={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#856404' : COLOR_CRITICAL} strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="10" cy="13" r="1.4" fill={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#856404' : COLOR_CRITICAL} />
+                <path d="M3 13a7 7 0 1 1 14 0" stroke={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#5e4200' : COLOR_CRITICAL} strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M10 13l3.2-4" stroke={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#5e4200' : COLOR_CRITICAL} strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="10" cy="13" r="1.4" fill={state === 'normal' ? '#0c5132' : state === 'unknown' ? '#5e4200' : COLOR_CRITICAL} />
               </svg>
             </div>
             <div style={{ flex: 1, minWidth: 220 }}>
