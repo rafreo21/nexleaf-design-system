@@ -1255,6 +1255,15 @@ node.fills = [paint];
 
 ### Binding is not free — check the resolved value first
 
+> **RETRACTION (2026-11-02).** The neutral row below is wrong: `fill-transparent-secondary` is black
+> at **6%**, not solid, and equals the code's `rgba(0,0,0,0.06)`. The "Open for Raphael" question at
+> the end of this section also rested on a false premise: the soft-tint variables already exist as
+> `Color/bg/surface/*`, and `fill-*-secondary` was the wrong tier to bind in the first place. Exact
+> for success and info, one step off for critical, no match for warning. Full table and what stays
+> open: the Soft tints entry in `DESIGN-LAYOUT-CONTRACT.md`. The "read the resolved value back" rule
+> stands, and it now includes **read `a`, not just `r,g,b`**. Binding failure as recorded here is left
+> unedited as history.
+
 Binding `Cell`'s tone tints to the library's `fill-*-secondary` variables **changed four of the five
 colours**, and one catastrophically:
 

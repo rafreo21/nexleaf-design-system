@@ -186,9 +186,10 @@ the darwin-arm64 rolldown binary, so vite dies on `Cannot find module
 - **Ednah's call on the amendment windows** — four questions, with a recommendation, on PD-38.
 
 **Settled 2026-08-27 — do not re-open**
-- Soft tints: the code is right and already tiered; the library is missing the soft-surface tier.
-  **PD-42** adds it, **PD-43** is the opaque `fill-transparent-secondary` bug. `Cell`'s tints stay raw
-  until PD-42 lands.
+- Soft tints: the code is right and already tiered. **RETRACTED 2026-11-02:** the library is not
+  missing the soft-surface tier (`Color/bg/surface/*` exists) and `fill-transparent-secondary` is not
+  opaque (black at 6%), so **PD-42** and **PD-43** need revisiting. `Cell`'s tints stay raw until
+  Raphael decides whether to bind them. See the Soft tints entry in `DESIGN-LAYOUT-CONTRACT.md`.
 - Annotation format: per-state notes use the tone-glyph short form; the structured `WHEN IT APPEARS`
   block is for the section intro card only. The temperature-monitoring board's 18 per-state notes
   need condensing.

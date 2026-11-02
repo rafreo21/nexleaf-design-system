@@ -351,6 +351,31 @@ skill stores. Corrections from a session that cannot commit are still worth acti
 
 ### Soft tints: the code is right, the library is missing a tier
 
+> **RETRACTION (2026-11-02).** Two claims in this entry were wrong. Read directly from the Styles
+> file (`db0FKgCAeJWBYyd1pSnmeg`), variables resolved through their aliases:
+>
+> 1. **"The library is missing a tier" is wrong.** The soft-surface tier exists as `Color/bg/surface/*`.
+>    The "library gains soft-surface variables" decision below is withdrawn: nothing needs adding for
+>    success, info or neutral.
+> 2. **"`fill-transparent-secondary` resolves opaque" is wrong.** It is black at **6%**, which equals
+>    the code's `rgba(0,0,0,0.06)`. Cause of the original reading not confirmed. Reading `r,g,b`
+>    without `a` would produce it.
+>
+> | tone | code `ICON_TONES` | existing soft surface | match |
+> |---|---|---|---|
+> | success | `#cdfee1` | `surface-success` `#cdfee1` | exact |
+> | info | `#eaf4ff` | `surface-info` `#eaf4ff` | exact |
+> | neutral | `rgba(0,0,0,0.06)` | `fill-transparent-secondary` 6% | exact |
+> | critical | `#fde2e1` | `surface-critical-hover` `#fee2e1` | one step off in red |
+> | warning | `#fff3cd` | `surface-warning` `#fff1e3` · `surface-caution` `#fff8db` | **none** |
+>
+> **Still true:** the two-tier reasoning, and a tile is a surface, not a chip. `Cell` stays raw until
+> Raphael decides whether to bind it to these, and what warning should be. Warning is a real
+> difference: code `#fff3cd` is yellow while Figma's warning surface is orange. PD-42 and PD-43 were
+> raised on the wrong premise and need revisiting.
+>
+> Assertion: resolve every alias and read `a` as well as `r,g,b` before calling a variable wrong.
+
 `src/tokens/index.js` already defines **two deliberate tiers**, and documents why:
 
 ```
