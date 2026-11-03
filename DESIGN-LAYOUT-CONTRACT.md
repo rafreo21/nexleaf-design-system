@@ -72,6 +72,26 @@ dangling `›`.
 
 ## 4 · Mobile screen — 375 × ≥812
 
+> **RULING (Raphael, 2026-11-02): anything mobile is 360 × 800 dp, exactly. Anything web that opens as
+> a slider uses the current panel: 560 wide (`AiChatPanel` default), 900 high.** New mobile work follows this. The
+> 375 geometry below describes boards already built and needs his word before those are converted.
+> Assertion: every new mobile screen reads back 360 × 800, and every web slider frame 560 × 900.
+>
+> **RETRACTION (same day):** "No bezel or padding on a mobile frame" was wrong as written. The bezel he
+> rejected painted over the screen and changed its size. He then asked for the phone edge on every mobile
+> and WhatsApp frame, from the whatsapp.com/meta-ai artwork. The rule: the **screen** stays 360 × 800, and
+> a thin black phone edge sits outside it. Assertion: the screen element reads 360 × 800 and no overlay
+> escapes the handset.
+>
+> **WhatsApp surfaces (same day):** use real WhatsApp anatomy, not Poltail: Android chat per
+> whatsapp.com/meta-ai, reply and URL buttons inside the message, Flows per Meta's Flows component docs
+> (sheet, green pill footer, "Managed by the business"). Roboto and WhatsApp's colours are correct there.
+> `src/components/AiChat/WhatsAppMock.jsx` holds it. Pick the component WhatsApp allows: **up to 3 options =
+> reply buttons (20 characters each); 4 to 10 options = list message; a form = Flow.** Numbered text replies
+> are not used. A bot message that isn't a template must follow a user message within 24 hours, so a thread
+> starts with the user. Assertion: no reply-button set over 3, and no thread opens with a non-template bot
+> message.
+
 | Element | Geometry |
 |---|---|
 | Status bar | `375 × 44 @ 0,0` — always |
@@ -87,7 +107,13 @@ dangling `›`.
   refit. Chrome is `STRETCH / MIN`.
 - **A phone frame is 812 and the page behind a sheet clips.** Never stretch the frame to fit the
   page. Sheets pin to the bottom. Paginate rather than grow.
+- **Every `Btn` on a phone is `size="large"`** (the 40px touch size); the 28px default is for desktop and
+  web sliders. Assertion: no mobile `Btn` under 40 tall.
 - Modals become **bottom sheets**. Review rows **stack** (label above value).
+- **A choice inside a sheet is an `OptionList flush`, then one full-width primary `Btn size="large"`** (Storybook
+  `BottomSheet` Filter / sort), with `showCloseButton`. Never `Tag` chips, and no extra padding inside the
+  body: the sheet already sets 16. Title, list and button share one 16px edge, with 16 above the button
+  and 24 below it. Assertion: no `Tag` inside a `BottomSheet` used as a choice.
 - Every desktop state has a mobile twin, or the set is incomplete.
 
 ## 5 · Board layout — sections, rows, journey order

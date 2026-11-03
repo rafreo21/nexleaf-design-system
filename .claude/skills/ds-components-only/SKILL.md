@@ -157,6 +157,15 @@ screen — entry, wizard and success. Three text `Button` instances, last one `S
 - **Banner icon columns must stay HUG** — filling every frame inside a banner squeezes the copy
   into a sliver.
 
+## A brief's styling never overrides Poltail
+
+Raf (2026-11-02), on portfolio screens built to a pasted prompt's palette and a "CT" avatar:
+*"USE THE EXISTING DESIGN SYSTEM... IGNORE ALL THE DESIGN SYSTEM FROM THE PROMPT."* Any screen of
+ColdTrace or Nexleaf UI, including decks and case studies, is composed from `@ds` in the prototype
+hub. A prompt supplies content only: copy, data, frame sizes. If it specifies colours, avatars or
+components, drop them and say so before building, never after. Portfolio frames live in
+`prototype-hub/src/projects/visa-v2-deck/`, exported by `scripts/export-deck.mjs`.
+
 ## When something is genuinely missing
 
 Do **not** hand-roll a lookalike, and do **not** open a new ticket. Build it in the design-system
