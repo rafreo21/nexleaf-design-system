@@ -11,11 +11,11 @@
 // short "thinking" delay; greetings mirror the production WhatsApp bot's hello
 // response; unscripted questions answer with an embedded records table.
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiChatPanel } from '../Toolbar/Toolbar.jsx';
 import { StatusBadge } from '../Badge/Badge.jsx';
 import {
-  AiChatConversation, AiChatWelcome, AiChatMessage, AiChatResponse, AiChatTyping, AiChatComposer,
+  AiChatConversation, AiChatWelcome, AiChatMessage, AiChatResponse, AiChatActivity, AiChatComposer,
   AiChatHistoryCount, AiChatHistorySelectBar, AiChatHistoryCell, AiChatHistoryEmpty, AiChatIcons,
   AiChatTable, AiChatToast, AiChatDeleteChatsDialog, AiChatRenameChatDialog,
 } from './AiChat.jsx';
@@ -43,6 +43,21 @@ const AI_REPLIES = {
     ],
   },
 };
+
+// What the assistant shows it is doing, one step per beat. Each script ends on
+// writing the answer, so the last line the user reads is the one that lands.
+const AI_STEP_MS = 800;
+const AI_STEP_READ = { id: 'read', label: 'Reading your question' };
+const AI_STEP_WRITE = { id: 'write', label: 'Writing the answer' };
+const aiActivityScript = (text, replyId) => {
+  if (!replyId && aiIsGreeting(text)) return [AI_STEP_READ, AI_STEP_WRITE];
+  if (replyId === 'about') return [AI_STEP_READ, { id: 'guide', verb: 'Read', label: 'Nexleaf AI user guide' }, AI_STEP_WRITE];
+  if (replyId === 'cce-count') {
+    return [AI_STEP_READ, { id: 'inventory', verb: 'Searched', label: 'Equipment inventory' }, { id: 'status', verb: 'Checked', label: 'Device status' }, AI_STEP_WRITE];
+  }
+  return [AI_STEP_READ, { id: 'records', verb: 'Searched', label: 'Equipment and facility records' }, AI_STEP_WRITE];
+};
+const aiStepsAt = (script, index) => script.map((step, i) => ({ ...step, status: i < index ? 'done' : 'active' })).slice(0, index + 1);
 
 const AI_PREVIOUS_CHATS = [
   { id: 'p1', title: 'Chilly Logistics Inspection: Time for a check!', meta: 'Last message just now.' },
@@ -91,12 +106,21 @@ export function AiChatDemo({ open, onClose }) {
   const [view, setView] = useState('chat'); // 'chat' | 'history'
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
-  const [thinking, setThinking] = useState(false);
+  const [activity, setActivity] = useState(null); // the steps shown so far, while replying
+  const timers = useRef([]);
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState([]);
   const [dialog, setDialog] = useState(null); // { kind: 'delete'|'rename'|'deleting', ids?, name? }
   const [toast, setToast] = useState(null);
   const [chats, setChats] = useState(AI_PREVIOUS_CHATS);
+
+  const thinking = activity !== null;
+
+  function clearTimers() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  }
+  useEffect(() => clearTimers, []);
 
   function removeChats(ids, verb) {
     setChats((cs) => cs.filter((c) => !ids.includes(c.id)));
@@ -106,37 +130,50 @@ export function AiChatDemo({ open, onClose }) {
   }
 
   function ask(text, replyId) {
+    if (thinking) return;
     setMessages((m) => [...m, { role: 'user', text }]);
     setDraft('');
-    setThinking(true);
-    setTimeout(() => {
-      setThinking(false);
+    const script = aiActivityScript(text, replyId);
+    const startedAt = Date.now();
+    setActivity(aiStepsAt(script, 0));
+    script.slice(1).forEach((_, i) => {
+      timers.current.push(setTimeout(() => setActivity(aiStepsAt(script, i + 1)), AI_STEP_MS * (i + 1)));
+    });
+    timers.current.push(setTimeout(() => {
+      setActivity(null);
       const reply = AI_REPLIES[replyId];
+      const trail = {
+        steps: script.map((step) => ({ ...step, status: 'done' })),
+        seconds: Math.round((Date.now() - startedAt) / 1000),
+      };
       setMessages((m) => {
         const prefix = m.filter((x) => x.role === 'assistant').length === 0
           ? `${AI_WELCOME_BACK}\n\n` : '';
         if (!reply && aiIsGreeting(text)) {
-          return [...m, { role: 'assistant', text: `${prefix}${AI_GREETING_REPLY}` }];
+          return [...m, { role: 'assistant', text: `${prefix}${AI_GREETING_REPLY}`, activity: trail }];
         }
         return [...m, reply ? {
           role: 'assistant',
           title: prefix ? undefined : reply.title,
           text: `${prefix}${reply.text}`,
           followUps: reply.followUps,
+          activity: trail,
         } : {
           // Unscripted question → records answer with the table embedded.
           role: 'assistant',
           text: `${prefix}Here's what I found for “${text}”: 3 matching records across 2 facilities.`,
           table: { columns: AI_RECORD_COLUMNS, rows: aiMatchingRecords() },
+          activity: trail,
         }];
       });
-    }, 1400);
+    }, AI_STEP_MS * script.length));
   }
 
   function newChat() {
     setMessages([]);
     setDraft('');
-    setThinking(false);
+    clearTimers();
+    setActivity(null);
     setView('chat');
   }
 
@@ -213,8 +250,9 @@ export function AiChatDemo({ open, onClose }) {
               m.role === 'user' ? (
                 <AiChatMessage key={i} role="user">{m.text}</AiChatMessage>
               ) : (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+                {m.activity && <AiChatActivity done steps={m.activity.steps} elapsed={m.activity.seconds} />}
                 <AiChatResponse
-                  key={i}
                   title={m.title}
                   onCopy={() => navigator.clipboard?.writeText(m.text)}
                   onLike={() => {}}
@@ -234,9 +272,10 @@ export function AiChatDemo({ open, onClose }) {
                     </div>
                   )}
                 </AiChatResponse>
+                </div>
               )
             ))}
-            {thinking && <AiChatTyping />}
+            {thinking && <AiChatActivity steps={activity} />}
           </AiChatConversation>
           <AiChatComposer
             value={draft}

@@ -93,7 +93,21 @@ List, select mode, and empty state. Cells are bevel cards (same `shadow-bevel-10
 
 ## Loading
 
+Three loading surfaces, one job each: `AiChatSkeleton` while a conversation opens, `AiChatProgress` for a blocking action like deleting chats, and `AiChatTyping` or `AiChatActivity` while a reply is being written.
+
 <Canvas of={AiChatStories.Loading} />
+
+## Thinking activity
+
+`AiChatActivity` shows what the assistant is doing: dots, the current step, elapsed seconds and a chevron. Open it to see every step. Pass `done` when the reply lands and it settles to "Thought for 4s" above the answer, still expandable, so people can check where an answer came from.
+
+<Canvas of={AiChatStories.ActivityLive} />
+
+<Canvas of={AiChatStories.ActivityStates} />
+
+- **Steps** use the shared item shape: `{ id, label, verb?, status: 'done' | 'active' }`. `verb` is the subdued lead word (`Searched`), so `label` reads as the thing touched (`Equipment inventory`).
+- **Timer** counts by itself. Pass `elapsed` (seconds) to freeze it, as a saved reply does.
+- **Copy:** name real sources in the user's words. Steps are a record of the work, so never show one that did not happen.
 
 ## Composer states
 
@@ -103,4 +117,4 @@ List, select mode, and empty state. Cells are bevel cards (same `shadow-bevel-10
 
 ## CSS classes (non-React stacks)
 
-`AiChat.css` ships the `nx-ai-chat-*` classes: conversation/welcome/message (`__bubble` is now the green speech bubble + `__tail`), `nx-ai-chat-response` (`__title`, `__body`, `__actions`, `__divider`, `__follow-ups`) with `nx-ai-chat-follow-up` chips, the history set (`nx-ai-chat-history-count`, `-select-bar`, `-cell` + `--hover`/`--selected`, `-empty`), `nx-ai-chat-menu`, typing, and the composer. Reuse `.nx-btn` / `.nx-option-list` / `.nx-checkbox` for the interactive parts. Requires `tokens.css` first.
+`AiChat.css` ships the `nx-ai-chat-*` classes: conversation/welcome/message (`__bubble` is now the green speech bubble + `__tail`), `nx-ai-chat-response` (`__title`, `__body`, `__actions`, `__divider`, `__follow-ups`) with `nx-ai-chat-follow-up` chips, the history set (`nx-ai-chat-history-count`, `-select-bar`, `-cell` + `--hover`/`--selected`, `-empty`), `nx-ai-chat-menu`, typing, `nx-ai-chat-activity` (`__toggle`, `__panel`, `__step`, `__step--active`), and the composer. Reuse `.nx-btn` / `.nx-option-list` / `.nx-checkbox` for the interactive parts. Requires `tokens.css` first.

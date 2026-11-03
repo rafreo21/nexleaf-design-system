@@ -60,6 +60,8 @@ function CloseButton({ onClick }) {
 const SHEET_CLOSE_THRESHOLD = 80;
 
 export function SlideOver({
+  // Mount here instead of document.body, to keep the overlay inside a frame.
+  portalTarget,
   open,
   onClose,
   children,
@@ -178,7 +180,7 @@ export function SlideOver({
     <header style={{ flexShrink: 0 }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 12, padding: '16px 24px',
+        gap: 12, padding: isBottom ? '8px 16px' : '16px 24px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
           {title != null && (
@@ -241,6 +243,6 @@ export function SlideOver({
         )}
       </div>
     </div>,
-    document.body
+    portalTarget ?? document.body
   );
 }

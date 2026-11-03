@@ -7,7 +7,7 @@ export * from './tokens/index.js';
 
 // ── Components ──
 export { Accordion } from './components/Accordion/Accordion.jsx';
-export { AiChatComposer,AiChatConversation,AiChatDeleteChatsDialog,AiChatHistoryCell,AiChatHistoryCount,AiChatHistoryEmpty,AiChatHistorySelectBar,AiChatIcons,AiChatMediaCard,AiChatMenu,AiChatMessage,AiChatProgress,AiChatRenameChatDialog,AiChatResponse,AiChatSkeleton,AiChatSources,AiChatTable,AiChatToast,AiChatTyping,AiChatWelcome } from './components/AiChat/AiChat.jsx';
+export { AiChatActivity,AiChatComposer,AiChatConversation,AiChatDeleteChatsDialog,AiChatHistoryCell,AiChatHistoryCount,AiChatHistoryEmpty,AiChatHistorySelectBar,AiChatIcons,AiChatMediaCard,AiChatMenu,AiChatMessage,AiChatProgress,AiChatRenameChatDialog,AiChatResponse,AiChatSkeleton,AiChatSources,AiChatTable,AiChatToast,AiChatTyping,AiChatWelcome } from './components/AiChat/AiChat.jsx';
 export { AppShell,RailCollapseToggle } from './components/AppShell/AppShell.jsx';
 export { BADGE_STRONG_TONES,BADGE_TONES,Badge,STATUS_BADGE_MAP,StatusBadge } from './components/Badge/Badge.jsx';
 export { Banner } from './components/Banner/Banner.jsx';

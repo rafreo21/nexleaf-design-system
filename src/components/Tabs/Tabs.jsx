@@ -23,6 +23,7 @@ export function Tabs({
   activeIndex = 0,
   onSelect,
   fitted = false,
+  wrap = false,
   moreViews = false,
   canAddNew = false,
   mobile = false,
@@ -145,7 +146,7 @@ export function Tabs({
   }
 
   return (
-    <div role="tablist" aria-label={ariaLabel} style={{ display: 'flex', gap: 4, padding: '0 4px', alignItems: 'center', fontFamily: 'Inter,sans-serif' }}>
+    <div role="tablist" aria-label={ariaLabel} style={{ display: 'flex', flexWrap: wrap ? 'wrap' : undefined, gap: 4, padding: '0 4px', alignItems: 'center', fontFamily: 'Inter,sans-serif' }}>
       {tabs.map((tab, i) => {
         const isActive = i === activeIndex;
         const isFoc = focIdx === i;

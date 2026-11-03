@@ -77,6 +77,10 @@
 
 /* ─── Header ───────────────────────────────────────────────────── */
 .nx-slideover__header { flex-shrink: 0; }
+/* A bottom sheet's title shares the body's 16px edge. */
+.nx-slideover--bottom .nx-slideover__header .nx-slideover__header-row {
+  padding: var(--nx-space-2) var(--nx-space-4);
+}
 .nx-slideover__header-row {
   display: flex;
   align-items: center;

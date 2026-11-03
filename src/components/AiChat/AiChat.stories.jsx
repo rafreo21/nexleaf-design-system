@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AiChatConversation, AiChatWelcome, AiChatMessage, AiChatResponse,
-  AiChatTyping, AiChatSkeleton, AiChatComposer,
+  AiChatTyping, AiChatActivity, AiChatSkeleton, AiChatComposer,
   AiChatHistoryCount, AiChatHistorySelectBar, AiChatHistoryCell, AiChatHistoryEmpty,
   AiChatSources, AiChatMediaCard, AiChatTable, AiChatToast, AiChatProgress,
   AiChatDeleteChatsDialog, AiChatRenameChatDialog,
@@ -11,6 +11,7 @@ import { AiChatPanel, AiLogo, ToolbarAskAiButton } from '../Toolbar/Toolbar.jsx'
 import { Pagination } from '../Pagination/Pagination.jsx';
 import { Btn } from '../Btn/Btn.jsx';
 import { StatusBadge } from '../Badge/Badge.jsx';
+import { WA, WaBubble, WaTypingBubble, WaPhone } from './WhatsAppMock.jsx';
 
 // Records behind "3 matching records across 2 facilities".
 const RECORD_COLUMNS = [
@@ -275,6 +276,58 @@ export const Typing = {
   render: () => <AiChatTyping />,
 };
 
+// ─── Activity — the thinking disclosure, steps shown ──────────────────────────
+const ACTIVITY_STEPS = [
+  { id: 'read', label: 'Reading your question' },
+  { id: 'inventory', verb: 'Searched', label: 'Equipment inventory' },
+  { id: 'status', verb: 'Checked', label: 'Device status' },
+  { id: 'write', label: 'Writing the answer' },
+];
+const activityAt = (index) => ACTIVITY_STEPS
+  .slice(0, index + 1)
+  .map((step, i) => ({ ...step, status: i === index ? 'active' : 'done' }));
+
+export const ActivityLive = {
+  name: 'Activity (live)',
+  render: () => {
+    const [run, setRun] = useState(0);
+    const [index, setIndex] = useState(0);
+    useEffect(() => {
+      setIndex(0);
+      const timer = setInterval(() => setIndex((i) => Math.min(i + 1, ACTIVITY_STEPS.length)), 1200);
+      return () => clearInterval(timer);
+    }, [run]);
+    const done = index >= ACTIVITY_STEPS.length;
+    return (
+      <PanelFrame>
+        <AiChatConversation>
+          <AiChatMessage role="user">How many CCEs do I have</AiChatMessage>
+          <AiChatActivity
+            key={run}
+            defaultOpen
+            done={done}
+            steps={done ? activityAt(ACTIVITY_STEPS.length - 1).map((s) => ({ ...s, status: 'done' })) : activityAt(index)}
+          />
+          {done && <AiChatResponse>You have 247 cold chain equipment units. 12 are currently offline.</AiChatResponse>}
+          {done && <Btn variant="secondary" onClick={() => setRun((n) => n + 1)}>Replay</Btn>}
+        </AiChatConversation>
+      </PanelFrame>
+    );
+  },
+};
+
+export const ActivityStates = {
+  name: 'Activity (states)',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 400 }}>
+      <AiChatActivity elapsed={2} steps={activityAt(1)} />
+      <AiChatActivity elapsed={6} defaultOpen steps={activityAt(3)} />
+      <AiChatActivity done elapsed={4} steps={activityAt(3).map((s) => ({ ...s, status: 'done' }))} />
+      <AiChatActivity done elapsed={4} defaultOpen steps={activityAt(3).map((s) => ({ ...s, status: 'done' }))} />
+    </div>
+  ),
+};
+
 // ─── Loading — history skeleton (panel first open) ────────────────────────────
 export const Loading = {
   render: () => (
@@ -374,166 +427,6 @@ export const PreviousChatEmpty = {
   ),
 };
 
-// ─── WhatsApp channel — how the Nexleaf bot renders on WhatsApp ───────────────
-//
-// Documentation mockup of the production WhatsApp surface (see the panel for
-// the in-app surface). Colors are WhatsApp's own — channel branding, not
-// design-system tokens.
-const WA = {
-  chatBg: '#ece5dd',
-  headerBg: '#f6f6f6',
-  userBubble: '#dcf8c6',
-  botBubble: '#ffffff',
-  notice: '#d5f4e4',
-  text: '#111b21',
-  meta: '#667781',
-  tick: '#53bdeb',
-  verified: '#007bfc',
-  accent: '#007aff',
-};
-
-function WaTicks() {
-  return (
-    <svg width={16} height={11} viewBox="0 0 16 11" fill="none" aria-label="Read">
-      <path d="m1 5.5 3 3L9.5 3M6.5 8.5l1 1L13 4" stroke={WA.tick} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function WaBubble({ from = 'bot', time, children }) {
-  const isUser = from === 'user';
-  return (
-    <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
-      <div style={{
-        maxWidth: '78%',
-        background: isUser ? WA.userBubble : WA.botBubble,
-        borderRadius: 10,
-        borderTopLeftRadius: isUser ? 10 : 2,
-        borderTopRightRadius: isUser ? 2 : 10,
-        boxShadow: '0 1px 0.5px rgba(11,20,26,0.13)',
-        padding: '7px 10px 6px',
-        fontSize: 15, lineHeight: '21px', color: WA.text,
-        whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-      }}>
-        {children}
-        <span style={{
-          float: 'right', display: 'inline-flex', alignItems: 'center', gap: 3,
-          margin: '8px -2px 0 10px',
-          fontSize: 11, color: WA.meta,
-        }}>
-          {time}
-          {isUser && <WaTicks />}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function WaTypingBubble() {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-      <div style={{
-        background: WA.botBubble, borderRadius: 10, borderTopLeftRadius: 2,
-        boxShadow: '0 1px 0.5px rgba(11,20,26,0.13)',
-        padding: '12px 14px', display: 'inline-flex', gap: 4,
-      }}>
-        {[0, 1, 2].map((i) => (
-          <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: '#9aa5ab', opacity: i === 1 ? 0.9 : 0.5 }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Quick-reply buttons under a bot message (WhatsApp business style).
-function WaButtons({ labels }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: '78%' }}>
-      {labels.map((label) => (
-        <div key={label} style={{
-          background: WA.botBubble, borderRadius: 8,
-          boxShadow: '0 1px 0.5px rgba(11,20,26,0.13)',
-          padding: '9px 12px', textAlign: 'center',
-          fontSize: 14, fontWeight: 550, color: '#0a7cff',
-        }}>{label}</div>
-      ))}
-    </div>
-  );
-}
-
-// Reusable phone shell (header + scrolling conversation + composer).
-function WaPhone({ children, scrollKey }) {
-  const scrollRef = useRef(null);
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [scrollKey]);
-  return (
-    <div style={{
-      width: 375, maxWidth: '100%', height: 720,
-      display: 'flex', flexDirection: 'column',
-      background: WA.chatBg,
-      border: '1px solid #ebebeb', borderRadius: 12, overflow: 'hidden',
-      fontFamily: 'Inter, sans-serif',
-    }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 12px', background: WA.headerBg,
-        borderBottom: '1px solid rgba(0,0,0,0.08)', flexShrink: 0,
-      }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: WA.accent, fontSize: 17 }}>
-          <svg width={12} height={20} viewBox="0 0 12 20" fill="none" aria-hidden="true">
-            <path d="M10.5 1.5 2 10l8.5 8.5" stroke={WA.accent} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          50
-        </span>
-        <span style={{
-          width: 38, height: 38, borderRadius: '50%', background: '#d3c1ab', flexShrink: 0,
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="7" r="3.4" fill="#8d7351" />
-            <path d="M3.5 17.5c1-3.4 3.6-5 6.5-5s5.5 1.6 6.5 5" fill="#8d7351" />
-          </svg>
-        </span>
-        <span style={{ minWidth: 0 }}>
-          <span style={{ display: 'block', fontSize: 16, fontWeight: 650, color: WA.text }}>Nexleaf Chat Bot</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: WA.meta }}>
-            Nexleaf Chatbot
-            <svg width={13} height={13} viewBox="0 0 20 20" aria-label="Verified">
-              <path d="M10 1.5 12.2 3.6l3-.4 1 2.9 2.7 1.4-1 2.9 1 2.9-2.7 1.4-1 2.9-3-.4L10 18.5 7.8 16.4l-3 .4-1-2.9L1.1 12.5l1-2.9-1-2.9 2.7-1.4 1-2.9 3 .4L10 1.5Z" fill={WA.verified} />
-              <path d="m6.9 10.1 2.1 2.1 4.1-4.4" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </svg>
-          </span>
-        </span>
-      </div>
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 12px 8px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {children}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: WA.headerBg, flexShrink: 0 }}>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Attach">
-          <path d="M10 3.5v13M3.5 10h13" stroke={WA.text} strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-        <span style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 100, border: '1px solid rgba(0,0,0,0.08)', padding: '7px 12px', minHeight: 20 }}>
-          <span style={{ flex: 1 }} />
-          <svg width={20} height={20} viewBox="0 0 20 20" fill="none" aria-label="Stickers">
-            <circle cx="10" cy="10" r="7.2" stroke={WA.meta} strokeWidth="1.4" />
-            <path d="M13 4a7.2 7.2 0 0 0 3 6.8" stroke={WA.meta} strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
-        </span>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Camera">
-          <rect x="2.5" y="5.5" width="15" height="11" rx="2.5" stroke={WA.text} strokeWidth="1.5" />
-          <path d="M7 5.5 8.2 3.5h3.6L13 5.5" stroke={WA.text} strokeWidth="1.5" strokeLinejoin="round" />
-          <circle cx="10" cy="11" r="3" stroke={WA.text} strokeWidth="1.5" />
-        </svg>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Voice message">
-          <rect x="7.5" y="2.5" width="5" height="9.5" rx="2.5" stroke={WA.text} strokeWidth="1.5" />
-          <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5" stroke={WA.text} strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  );
-}
-
 // ─── WhatsApp fault-reporting flow (case-study journey) ───────────────────────
 // "The refrigerator at Kireka Health Centre is not cooling" → confirm facility
 // → identify equipment → troubleshoot → summarise → service request reference.
@@ -576,8 +469,7 @@ export const WhatsAppFaultReport = {
           }
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: entry.from === 'user' ? 'flex-end' : 'flex-start' }}>
-              <WaBubble from={entry.from} time={entry.time}>{entry.text}</WaBubble>
-              {entry.buttons && i === visible.length - 1 && <WaButtons labels={entry.buttons} />}
+              <WaBubble from={entry.from} time={entry.time} buttons={i === visible.length - 1 ? entry.buttons : undefined}>{entry.text}</WaBubble>
             </div>
           );
         })}
@@ -622,8 +514,7 @@ export const WhatsAppLanguageEscalation = {
           }
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: entry.from === 'user' ? 'flex-end' : 'flex-start' }}>
-              <WaBubble from={entry.from} time={entry.time}>{entry.text}</WaBubble>
-              {entry.buttons && i === visible.length - 1 && <WaButtons labels={entry.buttons} />}
+              <WaBubble from={entry.from} time={entry.time} buttons={i === visible.length - 1 ? entry.buttons : undefined}>{entry.text}</WaBubble>
             </div>
           );
         })}
@@ -634,84 +525,18 @@ export const WhatsAppLanguageEscalation = {
 
 export const WhatsAppChannel = {
   render: () => (
-    <div style={{
-      width: 375, maxWidth: '100%', height: 720,
-      display: 'flex', flexDirection: 'column',
-      background: WA.chatBg,
-      border: '1px solid #ebebeb', borderRadius: 12, overflow: 'hidden',
-      fontFamily: 'Inter, sans-serif',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 12px', background: WA.headerBg,
-        borderBottom: '1px solid rgba(0,0,0,0.08)', flexShrink: 0,
-      }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: WA.accent, fontSize: 17 }}>
-          <svg width={12} height={20} viewBox="0 0 12 20" fill="none" aria-hidden="true">
-            <path d="M10.5 1.5 2 10l8.5 8.5" stroke={WA.accent} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          50
-        </span>
-        <span style={{
-          width: 38, height: 38, borderRadius: '50%', background: '#d3c1ab', flexShrink: 0,
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="7" r="3.4" fill="#8d7351" />
-            <path d="M3.5 17.5c1-3.4 3.6-5 6.5-5s5.5 1.6 6.5 5" fill="#8d7351" />
-          </svg>
-        </span>
-        <span style={{ minWidth: 0 }}>
-          <span style={{ display: 'block', fontSize: 16, fontWeight: 650, color: WA.text }}>Nexleaf Chat Bot</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: WA.meta }}>
-            Nexleaf Chatbot
-            <svg width={13} height={13} viewBox="0 0 20 20" aria-label="Verified">
-              <path d="M10 1.5 12.2 3.6l3-.4 1 2.9 2.7 1.4-1 2.9 1 2.9-2.7 1.4-1 2.9-3-.4L10 18.5 7.8 16.4l-3 .4-1-2.9L1.1 12.5l1-2.9-1-2.9 2.7-1.4 1-2.9 3 .4L10 1.5Z" fill={WA.verified} />
-              <path d="m6.9 10.1 2.1 2.1 4.1-4.4" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </svg>
-          </span>
-        </span>
+    <WaPhone>
+      <div style={{ alignSelf: 'center', background: '#fff', borderRadius: 8, padding: '4px 10px', fontSize: 12, fontWeight: 550, color: WA.meta, boxShadow: '0 1px 0.5px rgba(11,20,26,0.13)' }}>
+        Today
       </div>
-
-      {/* Conversation */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 12px 8px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ alignSelf: 'center', background: '#fff', borderRadius: 8, padding: '4px 10px', fontSize: 12, fontWeight: 550, color: WA.meta, boxShadow: '0 1px 0.5px rgba(11,20,26,0.13)' }}>
-          Today
-        </div>
-        <div style={{ alignSelf: 'center', background: WA.notice, borderRadius: 8, padding: '8px 14px', fontSize: 13, lineHeight: '18px', color: WA.text, textAlign: 'center', maxWidth: '88%' }}>
-          This business uses a secure service from Meta to manage this chat. Tap to learn more.
-        </div>
-
-        <WaBubble from="user" time="18:44">Hello</WaBubble>
-        <WaBubble from="bot" time="18:44">
-          {`Welcome back to the Nexleaf AI chatbot, ${USER_NAME}. Here's the answer to your question:\n\n${GREETING_REPLY}`}
-        </WaBubble>
+      <div style={{ alignSelf: 'center', background: WA.notice, borderRadius: 8, padding: '8px 14px', fontSize: 13, lineHeight: '18px', color: WA.text, textAlign: 'center', maxWidth: '88%' }}>
+        This business uses a secure service from Meta to manage this chat. Tap to learn more.
       </div>
-
-      {/* Composer */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: WA.headerBg, flexShrink: 0 }}>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Attach">
-          <path d="M10 3.5v13M3.5 10h13" stroke={WA.text} strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-        <span style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 100, border: '1px solid rgba(0,0,0,0.08)', padding: '7px 12px', minHeight: 20 }}>
-          <span style={{ flex: 1 }} />
-          <svg width={20} height={20} viewBox="0 0 20 20" fill="none" aria-label="Stickers">
-            <circle cx="10" cy="10" r="7.2" stroke={WA.meta} strokeWidth="1.4" />
-            <path d="M13 4a7.2 7.2 0 0 0 3 6.8" stroke={WA.meta} strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
-        </span>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Camera">
-          <rect x="2.5" y="5.5" width="15" height="11" rx="2.5" stroke={WA.text} strokeWidth="1.5" />
-          <path d="M7 5.5 8.2 3.5h3.6L13 5.5" stroke={WA.text} strokeWidth="1.5" strokeLinejoin="round" />
-          <circle cx="10" cy="11" r="3" stroke={WA.text} strokeWidth="1.5" />
-        </svg>
-        <svg width={22} height={22} viewBox="0 0 20 20" fill="none" aria-label="Voice message">
-          <rect x="7.5" y="2.5" width="5" height="9.5" rx="2.5" stroke={WA.text} strokeWidth="1.5" />
-          <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5" stroke={WA.text} strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
+      <WaBubble from="user" time="18:44">Hello</WaBubble>
+      <WaBubble from="bot" time="18:44">
+        {`Welcome back to the Nexleaf AI chatbot, ${USER_NAME}. Here's the answer to your question:\n\n${GREETING_REPLY}`}
+      </WaBubble>
+    </WaPhone>
   ),
 };
 

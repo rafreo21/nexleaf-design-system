@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AiLogo } from '../Toolbar/Toolbar.jsx';
 import { Skeleton } from '../Skeleton/Skeleton.jsx';
@@ -8,6 +8,7 @@ import { OptionList } from '../OptionList/OptionList.jsx';
 import { Modal } from '../Modal/Modal.jsx';
 import { TextInput } from '../TextInput/TextInput.jsx';
 import { Tag } from '../Tag/Tag.jsx';
+import { PolarisIconImg } from '../PolarisIcon/PolarisIcon.jsx';
 import { getItemId, getItemLabel } from '../../foundation/itemShape.js';
 import {
   BG_PAGE, BG_SURFACE, BG_SURFACE_HOVER, BG_INPUT, BG_INPUT_FOCUS, BG_CONTROL_DISABLED,
@@ -31,6 +32,7 @@ import illoNoteSync from '../../foundation/illustrations/note-sync.svg?raw';
 //       <AiChatMessage role="user">…</AiChatMessage>
 //       <AiChatMessage role="assistant">…</AiChatMessage>
 //       <AiChatTyping />                                  ← while responding
+//       <AiChatActivity steps={…} />                      ← …or with its steps shown
 //     </AiChatConversation>
 //     <AiChatComposer value={v} onChange={…} onSend={…} />
 //   </AiChatPanel>
@@ -211,8 +213,13 @@ function useTypingKeyframe() {
         0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
         30%           { opacity: 1;   transform: translateY(-3px); }
       }
+      @keyframes nxAiChatActivityPulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.55; }
+      }
       @media (prefers-reduced-motion: reduce) {
         .nx-ai-chat-typing__dot { animation: none !important; opacity: 0.6; }
+        .nx-ai-chat-activity__step--active { animation: none !important; }
       }
     `;
     document.head.appendChild(tag);
@@ -487,28 +494,153 @@ export function AiChatResponse({
   );
 }
 
+// ─── Typing dots — shared by AiChatTyping and AiChatActivity ─────────────────
+function TypingDots({ color = TEXT_SUBDUED }) {
+  useTypingKeyframe();
+  return (
+    <span style={{ display: 'inline-flex', gap: 4, padding: '6px 0' }} aria-hidden="true">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="nx-ai-chat-typing__dot"
+          style={{
+            width: 6, height: 6, borderRadius: '50%',
+            background: color,
+            animation: `nxAiChatTyping 1.2s ease-in-out ${i * 0.18}s infinite`,
+          }}
+        />
+      ))}
+    </span>
+  );
+}
+
 // ─── AiChatTyping — assistant is composing ───────────────────────────────────
 export function AiChatTyping({ label = 'AI is thinking' }) {
-  useTypingKeyframe();
   return (
     <div role="status" aria-label={label}
       style={{ display: 'flex', gap: 10, alignItems: 'center', fontFamily: FONT }}>
       <span style={{ flexShrink: 0, display: 'inline-flex' }} aria-hidden="true">
         <AiLogo size={24} />
       </span>
-      <span style={{ display: 'inline-flex', gap: 4, padding: '6px 0' }} aria-hidden="true">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="nx-ai-chat-typing__dot"
-            style={{
-              width: 6, height: 6, borderRadius: '50%',
-              background: TEXT_SUBDUED,
-              animation: `nxAiChatTyping 1.2s ease-in-out ${i * 0.18}s infinite`,
-            }}
-          />
-        ))}
-      </span>
+      <TypingDots />
+    </div>
+  );
+}
+
+// ─── AiChatActivity — what the assistant is doing, step by step ──────────────
+//
+// A disclosure row: dots + the current step + elapsed seconds + chevron. Opening
+// it lists every step. When the reply lands, pass `done` and it settles into a
+// quiet "Thought for 4s" line above the answer, still expandable.
+//
+//   <AiChatActivity steps={[
+//     { id: 'read',   label: 'Reading your question', status: 'done' },
+//     { id: 'search', verb: 'Searched', label: 'Equipment inventory', status: 'done' },
+//     { id: 'write',  label: 'Writing the answer', status: 'active' },
+//   ]} />
+//
+// Steps use the shared item shape plus `verb` (subdued lead word, so the object
+// reads as the thing touched) and `status` ('done' | 'active'). The counter runs
+// itself; pass `elapsed` (seconds) to freeze it, as a saved reply does.
+export function AiChatActivity({
+  steps = [],
+  done = false,
+  doneLabel,
+  elapsed,
+  thinkingLabel = 'Thinking',
+  defaultOpen = false,
+}) {
+  useTypingKeyframe();
+  const [open, setOpen] = useState(defaultOpen);
+  const [hover, setHover] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [ticks, setTicks] = useState(0);
+  const panelId = useId();
+
+  useEffect(() => {
+    if (done || elapsed != null) return undefined;
+    const timer = setInterval(() => setTicks((n) => n + 1), 1000);
+    return () => clearInterval(timer);
+  }, [done, elapsed]);
+
+  const seconds = elapsed ?? ticks;
+  const current = [...steps].reverse().find((s) => s.status === 'active') ?? steps[steps.length - 1];
+  const heading = done
+    ? (doneLabel ?? `Thought for ${Math.max(1, seconds)}s`)
+    : (current ? [current.verb, getItemLabel(current)].filter(Boolean).join(' ') : thinkingLabel);
+
+  return (
+    <div className="nx-ai-chat-activity" style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', fontFamily: FONT }}>
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className="nx-ai-chat-activity__toggle"
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          alignSelf: 'flex-start', maxWidth: '100%', minWidth: 0,
+          padding: '4px 8px', marginLeft: -8,
+          background: hover ? BG_SURFACE_HOVER : 'transparent',
+          border: 'none', borderRadius: RADIUS_SM,
+          boxShadow: focused ? FOCUS_RING : 'none',
+          fontFamily: FONT, fontSize: 13, fontWeight: 450, lineHeight: '20px', color: TEXT_SUBDUED,
+          cursor: 'pointer', outline: 'none',
+          transition: 'background 0.12s',
+        }}
+      >
+        <span style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center' }}>
+          {done ? <IcoCheck size={16} color={TEXT_SUBDUED} /> : <TypingDots color={COLOR_AI} />}
+        </span>
+        <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {heading}
+        </span>
+        {!done && (
+          <span style={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>{seconds}s</span>
+        )}
+        <span style={{
+          flexShrink: 0, display: 'inline-flex',
+          transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s',
+        }} aria-hidden="true">
+          <PolarisIconImg name="ChevronDownIcon" size={16} color={TEXT_SUBDUED} />
+        </span>
+      </button>
+
+      {/* Announces the current step without reading the whole list. */}
+      <span role="status" aria-live="polite" style={{
+        position: 'absolute', width: 1, height: 1, overflow: 'hidden', clipPath: 'inset(50%)',
+      }}>{heading}</span>
+
+      <div id={panelId} hidden={!open} className="nx-ai-chat-activity__panel" style={{
+        border: `1px solid ${BORDER_DEFAULT}`, borderRadius: RADIUS_LG,
+        background: BG_SURFACE, overflow: 'hidden',
+      }}>
+        {steps.map((step, index) => {
+          const id = getItemId(step, 'AiChatActivity') ?? String(index);
+          const active = step.status === 'active';
+          return (
+            <div
+              key={id}
+              className={`nx-ai-chat-activity__step${active ? ' nx-ai-chat-activity__step--active' : ''}`}
+              style={{
+                display: 'flex', gap: 8, padding: '8px 12px',
+                borderTop: index === 0 ? 'none' : `1px solid ${BORDER_LIGHT}`,
+                fontSize: 13, fontWeight: 450, lineHeight: '20px', color: TEXT_SUBDUED,
+                animation: active ? 'nxAiChatActivityPulse 1.4s ease-in-out infinite' : 'none',
+              }}
+            >
+              {step.verb && <span style={{ flexShrink: 0 }}>{step.verb}</span>}
+              <span style={{ minWidth: 0, wordBreak: 'break-word', color: step.verb ? TEXT_DEFAULT : TEXT_SUBDUED }}>
+                {getItemLabel(step)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

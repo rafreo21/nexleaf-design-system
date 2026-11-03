@@ -15,7 +15,7 @@ export interface NxTab {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="nx-tabs" [class.nx-tabs--fitted]="fitted" role="tablist">
+    <div class="nx-tabs" [class.nx-tabs--fitted]="fitted" [class.nx-tabs--wrap]="wrap" role="tablist">
       <button
         *ngFor="let tab of tabs; let i = index"
         type="button"
@@ -38,4 +38,5 @@ export class NxTabsComponent {
   @Input() activeIndex = 0;
   @Output() change = new EventEmitter<number>();
   @Input() fitted = false;
+  @Input() wrap = false;
 }

@@ -168,6 +168,9 @@ const [active, setActive] = useState(0);
 <Tabs fitted activeIndex={active} onSelect={(_id, _item, i) => setActive(i)}
   tabs={[{ label: 'Morning' }, { label: 'Evening' }]} />
 
+// Many tabs: the ones that don't fit move to the next row
+<Tabs wrap activeIndex={active} onSelect={(_id, _item, i) => setActive(i)} tabs={manyTabs} />
+
 // With "More views" and "Add new" controls
 <Tabs moreViews canAddNew activeIndex={active} onSelect={(_id, _item, i) => setActive(i)}
   tabs={[{ label: 'All' }, { label: 'Active' }]} />

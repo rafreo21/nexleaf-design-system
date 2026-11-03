@@ -4,6 +4,7 @@
  *
  * .nx-tabs                — the tablist container
  * .nx-tabs--fitted        — tabs share equal width
+ * .nx-tabs--wrap          — tabs that don't fit move to the next row
  * .nx-tab                 — individual tab item
  * .nx-tab--active         — selected state
  * .nx-tab--disabled       — disabled state
@@ -16,6 +17,10 @@
   padding: 0 4px;
   align-items: center;
   font-family: var(--nx-font-family);
+}
+
+.nx-tabs--wrap {
+  flex-wrap: wrap;
 }
 
 .nx-tabs--fitted .nx-tab {

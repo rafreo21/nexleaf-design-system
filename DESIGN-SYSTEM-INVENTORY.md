@@ -162,6 +162,9 @@ no Figma equivalent yet. Composing in the prototype? Use them. Drawing in Figma?
 | `Toast` | `actions` · `inlineActions` | `actions` renders action buttons; `inlineActions` defaults **true** |
 | `Banner` | `actions` · `inlineActions` · `hideIcon` | `inlineActions` defaults **false** — the opposite of Toast |
 | `SearchSelect` / `SearchSelectMulti` | `helpText` | 13px subdued line under the field; suppressed when `error` is set |
+| `Tabs` | `wrap` | tabs that don't fit move to the next row, instead of running off the page. Also `.nx-tabs--wrap` and Angular `[wrap]` |
+| `SlideOver` / `BottomSheet` | `portalTarget` | element to mount into instead of `document.body`, to keep the overlay inside a frame. Its `fixed` positioning needs a transformed ancestor |
+| `AiChatActivity` | new component | thinking disclosure: `steps` (`{id, label, verb?, status}`), `done`, `doneLabel`, `elapsed`, `defaultOpen`. No Figma component yet |
 
 Two traps in that table:
 
