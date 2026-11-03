@@ -36,7 +36,7 @@ export default defineConfig({
       // on the gate's OWN port 6008 (the interactive Angular Storybook dev server
       // owns 6007; sharing a port made the gate compare against whatever happened
       // to be running there). Static = no dev-server lazy compile, deterministic.
-      command: 'npm run build && npm run build-storybook && python3 -m http.server 6008 --directory storybook-static',
+      command: 'npm run build && npm run build-storybook && python3 scripts/serve-static.py 6008 storybook-static',
       cwd: 'angular',
       url: 'http://localhost:6008/iframe.html',
       reuseExistingServer: true,

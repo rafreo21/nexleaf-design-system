@@ -68,6 +68,9 @@ for (const id of STORIES) {
   test(id, async ({ page }) => {
     await page.goto(`/iframe.html?id=${id}&viewMode=story`);
     await page.waitForSelector('#storybook-root', { state: 'attached' });
+    // The root exists before Angular renders into it; under parallel load the
+    // story can arrive late, so wait for real content before the screenshot.
+    await page.locator('#storybook-root > *').first().waitFor({ state: 'visible', timeout: 20_000 });
     await page.waitForLoadState('networkidle').catch(() => {});
     await page.waitForTimeout(700);
     await expect(page.locator('#storybook-root')).toHaveScreenshot(`${id}.png`);
