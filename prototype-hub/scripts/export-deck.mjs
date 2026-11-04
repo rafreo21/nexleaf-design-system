@@ -211,10 +211,10 @@ for (const [id, f] of Object.entries(FRAMES)) {
       css += state === 0 ? '' : `@keyframes L${state}{0%,${p(t)}%{opacity:0}${p(t + 0.2)}%,${p(f.total - 0.3)}%{opacity:1}100%{opacity:0}}.L${state}{animation:L${state} ${f.total}s linear infinite}`;
       layers.push(`<g class="L${state}">${body}</g>`);
     } else layers.push(body);
-    if (state === states - 1) await page.screenshot({ path: `${OUT}/${id}.png` });
+    if (state === states - 1) await page.screenshot({ path: `${OUT}/${id}.png`, omitBackground: true });
   }
   const [w, h] = f.slot ?? [f.width, f.height];
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${f.width} ${f.height}"><style>${FONT}${css}</style><defs>${defs.join('')}</defs><rect width="${f.width}" height="${f.height}" fill="#f1f1f1"/>${layers.join('')}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${f.width} ${f.height}"><style>${FONT}${css}</style><defs>${defs.join('')}</defs>${layers.join('')}</svg>`;
   writeFileSync(`${OUT}/${id}.svg`, svg);
   report.push(`${id}: ${errors.length ? errors.slice(0, 2).join(' | ') : 'ok'}`);
   await context.close();

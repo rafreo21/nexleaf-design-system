@@ -300,7 +300,7 @@ function Channels({ state }) {
     setLine({ x1: a.right - r.left, y1: a.top + 40 - r.top, x2: b.left + b.width / 2 - r.left, y2: b.top - r.top });
   }, [last]);
   return (
-    <div ref={root} style={{ position: 'relative', ...CHANNELS, background: BG_PAGE, fontFamily: FONT }}>
+    <div ref={root} style={{ position: 'relative', ...CHANNELS, fontFamily: FONT }}>
       <WaDevice style={{ position: 'absolute', left: 12, top: 12 }}>
         <WaThread entries={WA_TIMELINE.slice(0, state + 1)} linkRef={link} />
       </WaDevice>
@@ -399,7 +399,7 @@ const Arrow = () => (
 );
 
 const Mvp = () => (
-  <div style={{ width: 398, height: 380, boxSizing: 'border-box', padding: '20px 15px', background: BG_PAGE, fontFamily: FONT }}>
+  <div style={{ width: 398, height: 380, boxSizing: 'border-box', padding: '20px 15px', fontFamily: FONT }}>
     <Badge tone="info">Flow 1</Badge>
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 0, marginTop: 16 }}>
       <MiniScreen label="Welcome" bars={['90%', '70%']} />
@@ -447,7 +447,7 @@ const Row = ({ title, amount }) => <Cell title={title} description={amount} />;
 
 function Fintech() {
   return (
-    <div style={{ width: 800, height: 1030, background: BG_PAGE, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+    <div style={{ width: 800, height: 1030, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
       <Device>
         <div style={{ padding: '12px 16px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Page title="Virtual card" flushTop />
@@ -501,7 +501,7 @@ const InChat = ({ children, composer }) => <Device><Chat composer={composer}>{ch
 
 export const FRAMES = {
   'P1-hero': { width: 800, height: 1063, render: () => (
-    <div style={{ width: 800, height: 1063, background: BG_PAGE, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+    <div style={{ width: 800, height: 1063, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
       <div data-float="f1"><Device><Chat><Checking /></Chat></Device></div>
       <div data-float="f2"><WaDevice><WaThread entries={WA_TIMELINE.slice(0, 6)} /></WaDevice></div>
     </div>
@@ -568,5 +568,5 @@ export function Frame({ id, state = 0 }) {
     const timer = setTimeout(() => document.activeElement?.blur(), 300);
     return () => clearTimeout(timer);
   }, []);
-  return frame ? <div id="frame" style={{ width: frame.width, height: frame.height, overflow: 'hidden', background: BG_PAGE, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{frame.render(state)}</div> : null;
+  return frame ? <div id="frame" style={{ width: frame.width, height: frame.height, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{frame.render(state)}</div> : null;
 }

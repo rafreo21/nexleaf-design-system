@@ -76,6 +76,8 @@ dangling `›`.
 > a slider uses the current panel: 560 wide (`AiChatPanel` default), 900 high.** New mobile work follows this. The
 > 375 geometry below describes boards already built and needs his word before those are converted.
 > Assertion: every new mobile screen reads back 360 × 800, and every web slider frame 560 × 900.
+> **Exported SVGs and PNGs have no background (Raphael, 2026-11-04):** nothing grey behind a frame; only
+> the screen, the phone edge and its shadow. Assertion: every phone PNG has a transparent corner pixel.
 >
 > **RETRACTION (same day):** "No bezel or padding on a mobile frame" was wrong as written. The bezel he
 > rejected painted over the screen and changed its size. He then asked for the phone edge on every mobile
